@@ -1,7 +1,7 @@
 {
     "name": "wucdbm-exponential-slider",
     "private": false,
-    "description": "Functions to manage exponential slider",
+    "description": "Functions to manage an exponential slider",
     "version": "1.0.0",
     "type": "module",
     "main": "./dist/index.js",
@@ -27,17 +27,6 @@
     "peerDependencies": {
         "@rollup/plugin-replace": "^5.0.5",
         "vite": "^5.0.12"
-    },
-    "peerDependenciesMeta": {
-        "@vueuse/head": {
-            "optional": true
-        },
-        "vue": {
-            "optional": true
-        },
-        "vue-router": {
-            "optional": true
-        }
     },
     "devDependencies": {
         "@commitlint/cli": "^18.5.0",
