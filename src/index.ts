@@ -11,6 +11,7 @@ export type Bounds = {
 export type SliderCalculator = {
     stepToModel: (step: number) => number
     modelToStep: (model: number) => number
+    config: ResolvedConfig
 }
 
 export type ResolvedConfig = {
@@ -31,6 +32,7 @@ export function useExponentialSlider(
     return {
         stepToModel: (step: number) => stepToModelInternal(step, config),
         modelToStep: (model: number) => modelToStepInternal(model, config),
+        config,
     }
 }
 
