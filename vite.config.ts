@@ -7,8 +7,7 @@ export default defineConfig({
     plugins: [
         dts({
             rollupTypes: true,
-            include: ['lib'],
-            exclude: ['lib/cli'],
+            include: ['src'],
         }),
     ],
     build: {

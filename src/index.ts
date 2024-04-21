@@ -13,7 +13,7 @@ export type SliderCalculator = {
     modelToStep: (model: number) => number
 }
 
-type ResolvedConfig = {
+export type ResolvedConfig = {
     steps: number
     linearAbsolute: number
     linearPercent: number
@@ -68,14 +68,14 @@ export function stepToModelInternal(
               linearAbsolute
             : 0
 
-    const max123 = max - min - linearAbsolute
+    const rangeExponential = range - linearAbsolute
 
     const remainder = step - steps * linearPercent
     const expPercent = 1 - linearPercent
     const percentOfMax = remainder / (steps * expPercent)
-    const expVal = percentOfMax * max123
+    const expVal = percentOfMax * rangeExponential
 
-    return linear + expRange(expVal, 0, max123) + min
+    return linear + expRange(expVal, 0, rangeExponential) + min
 }
 
 export function modelToStep(
@@ -120,7 +120,7 @@ export function modelToStepInternal(
     )
 }
 
-function resolveConfig(
+export function resolveConfig(
     steps: number,
     bounds: Bounds,
     linear?: LinearConfig,
