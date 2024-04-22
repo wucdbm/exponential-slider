@@ -58,6 +58,10 @@ export function stepToModelInternal(
         return percent * range + min
     }
 
+    if (1 === linearPercent) {
+        return percent * range + min
+    }
+
     if (percent <= linearPercent) {
         const percentOfAbsolute =
             linearPercent > 0 ? percent / linearPercent : 0
@@ -104,6 +108,10 @@ export function modelToStepInternal(
         return Math.round(percent * steps)
     }
 
+    if (1 === linearPercent) {
+        return Math.round((actualValue / range) * steps)
+    }
+
     if (linearAbsolute > 0 && actualValue <= linearAbsolute) {
         const percent = (actualValue / linearAbsolute) * linearPercent
 
@@ -131,20 +139,20 @@ export function resolveConfig(
         maxLinear: 0,
         linearPercent: 0,
     }
-    const linearPercent = linear.linearPercent / 100
+    const linearPercent =
+        limitBounds(linear.linearPercent, { min: 0, max: 100 }) / 100
     const linearAbsolute = Math.min(
         linear.maxLinear,
         Math.round(bounds.max * linearPercent),
     )
-    const max = linear.linearPercent === 100 ? linear.maxLinear : bounds.max
 
     return {
         steps: steps,
         linearAbsolute: linearAbsolute,
         linearPercent: linearPercent,
         min: bounds.min,
-        max: max,
-        range: max - bounds.min,
+        max: bounds.max,
+        range: bounds.max - bounds.min,
     }
 }
 
@@ -224,8 +232,8 @@ if (import.meta.vitest) {
                 linearAbsolute: 15_000,
                 linearPercent: 1,
                 min: 500,
-                max: 15_000,
-                range: 14_500,
+                max: 1_500_000,
+                range: 1499500,
             })
         })
         test('Very low max', () => {
@@ -385,7 +393,7 @@ if (import.meta.vitest) {
                         linearPercent: 100,
                     },
                 ).toFixed(0),
-            ).toBe('1000')
+            ).toBe('800')
 
             expect(
                 modelToStep(
@@ -400,7 +408,7 @@ if (import.meta.vitest) {
                         linearPercent: 100,
                     },
                 ).toFixed(0),
-            ).toBe('1000')
+            ).toBe('800')
 
             expect(
                 modelToStep(
@@ -515,7 +523,7 @@ if (import.meta.vitest) {
                         linearPercent: 100,
                     },
                 ).toFixed(0),
-            ).toBe('999001')
+            ).toBe('1248751')
             expect(
                 stepToModel(
                     1000,
@@ -529,7 +537,7 @@ if (import.meta.vitest) {
                         linearPercent: 100,
                     },
                 ).toFixed(0),
-            ).toBe('1000000')
+            ).toBe('1250000')
             expect(
                 stepToModel(
                     0,
@@ -667,6 +675,95 @@ if (import.meta.vitest) {
                 min: 500,
                 max: 1_500_000,
             })
+            expect(step).toBe(stepForModel)
+        })
+
+        test('With Lower Max Linear due to low bounds.max', () => {
+            const step = 25
+            const model = stepToModel(
+                step,
+                10_000,
+                {
+                    min: 500,
+                    max: 30_000,
+                },
+                {
+                    maxLinear: 50_000,
+                    linearPercent: 75,
+                },
+            )
+            const stepForModel = modelToStep(
+                model,
+                10_000,
+                {
+                    min: 500,
+                    max: 30_000,
+                },
+                {
+                    maxLinear: 50_000,
+                    linearPercent: 75,
+                },
+            )
+            expect(step).toBe(stepForModel)
+        })
+
+        test('With invalid linear - less than 0', () => {
+            const linearPercent = -25
+            const step = 25
+            const model = stepToModel(
+                step,
+                10_000,
+                {
+                    min: 500,
+                    max: 30_000,
+                },
+                {
+                    maxLinear: 50_000,
+                    linearPercent: linearPercent,
+                },
+            )
+            const stepForModel = modelToStep(
+                model,
+                10_000,
+                {
+                    min: 500,
+                    max: 30_000,
+                },
+                {
+                    maxLinear: 50_000,
+                    linearPercent: linearPercent,
+                },
+            )
+            expect(step).toBe(stepForModel)
+        })
+
+        test('With invalid linear - above 100', () => {
+            const linearPercent = 125
+            const step = 25
+            const model = stepToModel(
+                step,
+                10_000,
+                {
+                    min: 500,
+                    max: 30_000,
+                },
+                {
+                    maxLinear: 50_000,
+                    linearPercent: linearPercent,
+                },
+            )
+            const stepForModel = modelToStep(
+                model,
+                10_000,
+                {
+                    min: 500,
+                    max: 30_000,
+                },
+                {
+                    maxLinear: 50_000,
+                    linearPercent: linearPercent,
+                },
+            )
             expect(step).toBe(stepForModel)
         })
     })

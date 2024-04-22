@@ -2,7 +2,7 @@
     "name": "wucdbm-exponential-slider",
     "private": false,
     "description": "Functions to manage an exponential slider",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "type": "module",
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
