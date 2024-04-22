@@ -766,5 +766,21 @@ if (import.meta.vitest) {
             )
             expect(step).toBe(stepForModel)
         })
+
+        test('Random test out there', () => {
+            const model = stepToModel(
+                10_000,
+                10_000,
+                {
+                    min: 670,
+                    max: 429545,
+                },
+                {
+                    maxLinear: 25000,
+                    linearPercent: 100,
+                },
+            )
+            expect(model).toBe(429545)
+        })
     })
 }
