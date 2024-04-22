@@ -768,9 +768,10 @@ if (import.meta.vitest) {
         })
 
         test('Random test out there', () => {
+            const totalSteps = 1_000_000
             const model = stepToModel(
-                10_000,
-                10_000,
+                totalSteps,
+                totalSteps,
                 {
                     min: 670,
                     max: 429545,
